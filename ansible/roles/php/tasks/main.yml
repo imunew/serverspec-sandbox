@@ -1,0 +1,31 @@
+- name: Stat remi.repo
+  stat: path=/etc/yum.repos.d/remi.repo
+  register: remi_repo
+
+- name: Download and install Remi repoository
+  shell: |
+    cd /tmp
+    wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+    rpm -Uvh remi-release-6.rpm
+    rm -f remi-release-6.rpm
+  when: not remi_repo.stat.exists
+
+- name: Install yum packages from remi
+  yum: name={{ item }} state=installed enablerepo=remi,remi-php56
+  with_items:
+    - php
+    - php-devel
+    - php-common
+    - php-mcrypt
+    - php-cli
+    - php-xml
+    - php-mbstring
+    - php-gd
+    - php-fpm
+    - php-pear
+    - php-pecl-imagick
+    - php-pecl-xdebug
+    - php-pecl-zendopcache
+
+- name: Run php-fpm
+  service: name=php-fpm state=started enabled=yes

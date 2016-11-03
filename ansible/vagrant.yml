@@ -1,0 +1,7 @@
+- hosts: all
+  sudo: true
+  roles:
+    - { role: roles/centos }
+    - { role: roles/nginx }
+    - { role: roles/php }
+    - { role: roles/mysql }
